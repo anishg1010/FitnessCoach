@@ -1,0 +1,133 @@
+def calculate_bmi(weight, height):
+    """
+    Calculate BMI based on weight (kg) and height (m).
+    Converts height to meters if given in centimeters.
+    """
+    if height > 3:  # If height is given in cm instead of meters
+        height = height / 100  # Convert cm to meters
+    
+    bmi = weight / (height ** 2)
+    return round(bmi, 2)
+
+def diet_recommendation(weight, height, goal):
+    """
+    Provides a detailed diet recommendation based on BMI and fitness goal.
+    
+    :param weight: Weight in kg
+    :param height: Height in meters or cm (auto-converts)
+    :param goal: Desired goal ("weight_loss", "maintenance", "muscle_gain")
+    :return: Recommended diet plan
+    """
+    bmi = calculate_bmi(weight, height)
+
+    if bmi < 18.5:
+        status = "Underweight"
+    elif 18.5 <= bmi < 24.9:
+        status = "Normal weight"
+    elif 25 <= bmi < 29.9:
+        status = "Overweight"
+    else:
+        status = "Obese"
+
+    diet_plans = {
+        "weight_loss": {
+            "calories": "1500-1800 kcal/day",
+            "protein": "1.2-1.5g per kg body weight (high protein)",
+            "carbs": "Low to moderate (whole grains, veggies, legumes)",
+            "fats": "Healthy fats (avocado, nuts, olive oil)",
+            "meal_plan": {
+                "Breakfast": "Oatmeal with almonds, berries & green tea",
+                "Lunch": "Grilled chicken salad with olive oil dressing",
+                "Snack": "Greek yogurt with flaxseeds",
+                "Dinner": "Steamed fish with quinoa and steamed vegetables"
+            }
+        },
+        "maintenance": {
+            "calories": "2000-2500 kcal/day",
+            "protein": "1g per kg body weight (moderate protein)",
+            "carbs": "Balanced intake (whole grains, fruits, vegetables)",
+            "fats": "Moderate healthy fats",
+            "meal_plan": {
+                "Breakfast": "Whole wheat toast with scrambled eggs and avocado",
+                "Lunch": "Brown rice with grilled tofu and stir-fried vegetables",
+                "Snack": "Handful of mixed nuts and a fruit",
+                "Dinner": "Baked salmon with roasted sweet potatoes and broccoli"
+            }
+        },
+        "muscle_gain": {
+            "calories": "2500-3000 kcal/day",
+            "protein": "1.5-2g per kg body weight (high protein)",
+            "carbs": "Higher intake (brown rice, oats, quinoa, potatoes)",
+            "fats": "Healthy fats (nuts, seeds, olive oil, peanut butter)",
+            "meal_plan": {
+                "Breakfast": "Protein smoothie with banana, peanut butter, and whey protein",
+                "Lunch": "Chicken breast with sweet potatoes and steamed broccoli",
+                "Snack": "Cottage cheese with walnuts and honey",
+                "Dinner": "Lean beef with quinoa and sautéed spinach"
+            }
+        }
+    }
+
+    return {
+        "BMI": bmi,
+        "Status": status,
+        "Recommended Diet": diet_plans.get(goal, "Invalid goal. Choose 'weight_loss', 'maintenance', or 'muscle_gain'")
+    }
+
+def get_user_input():
+    """
+    Gets user input for weight, height, and fitness goal, then calculates BMI and suggests a diet plan.
+    """
+    try:
+        weight = float(input("Enter your weight in kg: "))
+        height = float(input("Enter your height in meters (or cm, it will be converted): "))
+
+        bmi = calculate_bmi(weight, height)
+        print(f"\n✅ Your BMI is: {bmi}")
+
+        if bmi < 18.5:
+            status = "Underweight"
+        elif 18.5 <= bmi < 24.9:
+            status = "Normal weight"
+        elif 25 <= bmi < 29.9:
+            status = "Overweight"
+        else:
+            status = "Obese"
+
+        print(f"📌 Your BMI category is: {status}")
+
+        print("\n🏋️‍♂️ Choose your fitness goal:")
+        print("1️⃣ Weight Loss")
+        print("2️⃣ Maintenance")
+        print("3️⃣ Muscle Gain")
+
+        goal_choice = input("Enter the number corresponding to your goal (1/2/3): ")
+
+        goals = {
+            "1": "weight_loss",
+            "2": "maintenance",
+            "3": "muscle_gain"
+        }
+
+        goal = goals.get(goal_choice)
+
+        if not goal:
+            print("⚠️ Invalid choice. Please select a valid option.")
+            return
+        
+        recommendation = diet_recommendation(weight, height, goal)
+
+        print("\n📋 --- Your Personalized Diet Recommendation --- 📋")
+        print(f"📌 Recommended Calories: {recommendation['Recommended Diet']['calories']}")
+        print(f"💪 Protein Intake: {recommendation['Recommended Diet']['protein']}")
+        print(f"🥗 Carbohydrates: {recommendation['Recommended Diet']['carbs']}")
+        print(f"🥑 Fats: {recommendation['Recommended Diet']['fats']}")
+        print("\n🍽 **Suggested Meal Plan:**")
+        for meal, food in recommendation['Recommended Diet']['meal_plan'].items():
+            print(f"✅ {meal}: {food}")
+
+    except ValueError:
+        print("⚠️ Invalid input. Please enter numerical values for weight and height.")
+
+# Run the function
+get_user_input()
